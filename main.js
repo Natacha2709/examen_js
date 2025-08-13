@@ -13,10 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadAllData();
 });
 
-// ========================================
 // FONCTIONS D'INITIALISATION
-// ========================================
-
 function initializeApp() {
     // Compteur de caractères pour les messages
     const messageContent = document.getElementById('messageContent');
@@ -45,9 +42,7 @@ function setupEventListeners() {
     });
 }
 
-// ========================================
 // FONCTIONS UTILITAIRES
-// ========================================
 
 function showNotification(message, type = 'info') {
     const notification = document.getElementById('notification');
@@ -135,9 +130,7 @@ function getInitials(name) {
         .substring(0, 2);
 }
 
-// ========================================
 // TEST DE CONNEXION
-// ========================================
 
 async function testConnection() {
     const statusElement = document.getElementById('connectionStatus');
@@ -158,9 +151,7 @@ async function testConnection() {
     }
 }
 
-// ========================================
 // GESTION DES UTILISATEURS
-// ========================================
 
 async function loadUsers() {
     const loading = document.getElementById('usersLoading');
@@ -313,9 +304,7 @@ async function editUser(id) {
     }
 }
 
-// ========================================
 // GESTION DES TÂCHES
-// ========================================
 
 async function loadTasks() {
     const loading = document.getElementById('tasksLoading');
@@ -448,9 +437,7 @@ async function editTask(id) {
     }
 }
 
-// ========================================
 // GESTION DES MESSAGES
-// ========================================
 
 async function loadMessages() {
     const loading = document.getElementById('messagesLoading');
@@ -690,9 +677,7 @@ function updateRecentActivity() {
     recentActivity.innerHTML = activitiesHtml;
 }
 
-// ========================================
 // GESTION DES ONGLETS
-// ========================================
 
 function handleTabChange(event) {
     const targetId = event.target.getAttribute('href');
@@ -712,11 +697,7 @@ function handleTabChange(event) {
             break;
     }
 }
-
-// ========================================
 // CHARGEMENT INITIAL
-// ========================================
-
 async function loadAllData() {
     try {
         await testConnection();
