@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liste des messages</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .message-list {
+      list-style: none;
+      padding: 0;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .message-item {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .message-item:hover {
+      background-color: #f5f5f5;
+    }
+    .message-author {
+      font-weight: bold;
+      color: #333;
+    }
+    .message-content {
+      color: #666;
+      margin-top: 5px;
+    }
+    .message-details {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .message-details h3 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Liste des messages</h1>
+  <ul class="message-list" id="messageList"></ul>
+  <div class="message-details" id="messageDetails" style="display: none;"></div>
+
+  <script>
+    // Données locales (simulation de l'API)
+    const messages = [
+      {
+        id: 361,
+        content: "Updated message with more detailed content to satisfy the schema requirements.",
+        userId: 2,
+        createdAt: "2025-08-12T06:02:10.000Z",
+        updatedAt: "2025-08-12T06:03:50.000Z",
+        user: {
+          id: 2,
+          name: "Bob Dupont",
+          username: "bob_d"
+        }
+      },
+      {
+        id: 362,
+        content: "Deuxième message fictif, avec un autre auteur.",
+        userId: 3,
+        createdAt: "2025-08-13T08:15:00.000Z",
+        updatedAt: "2025-08-13T08:20:00.000Z",
+        user: {
+          id: 3,
+          name: "Alice Martin",
+          username: "alice_m"
+        }
+      },
+      // ... (ajoutez le reste des messages ici)
+    ];
+
+    // Fonction pour afficher la liste des messages
+    function displayMessageList() {
+      const messageListElement = document.getElementById('messageList');
+      messageListElement.innerHTML = messages.map(message => `
+        <li class="message-item" onclick="showMessageDetails(${message.id})">
+          <div class="message-author">${message.user.name}</div>
+          <div class="message-content">${message.content.substring(0, 50)}...</div>
+        </li>
+      `).join('');
+    }
+
+    // Fonction pour afficher les détails d'un message
+    function showMessageDetails(messageId) {
+      const message = messages.find(m => m.id === messageId);
+      const messageDetailsElement = document.getElementById('messageDetails');
+      messageDetailsElement.innerHTML = `
+        <h3>Détails du message</h3>
+        <p><strong>Auteur :</strong> ${message.user.name} (@${message.user.username})</p>
+        <p><strong>Contenu :</strong> ${message.content}</p>
+        <p><strong>Créé le :</strong> ${new Date(message.createdAt).toLocaleString()}</p>
+        <p><strong>Mis à jour le :</strong> ${new Date(message.updatedAt).toLocaleString()}</p>
+      `;
+      messageDetailsElement.style.display = 'block';
+    }
+
+    // Initialisation
+    displayMessageList();
+  </script>
+</body>
+</html>
+
