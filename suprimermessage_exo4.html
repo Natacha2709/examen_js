@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des messages</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #4a6fa5;
+      --secondary-color: #166088;
+      --accent-color: #4fc3f7;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+      --warning-color: #ffc107;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      color: var(--dark-color);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--secondary-color);
+      font-weight: 600;
+      position: relative;
+      display: inline-block;
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+      border-radius: 3px;
+    }
+
+    .user-selector {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .user-selector select {
+      padding: 12px 20px;
+      border: none;
+      border-radius: var(--border-radius);
+      background-color: white;
+      box-shadow: var(--box-shadow);
+      font-size: 16px;
+      width: 300px;
+      transition: var(--transition);
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      background-size: 1em;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    .user-selector select:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+      padding: 15px;
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 20px;
+      margin-right: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-info-text h2 {
+      margin: 0;
+      color: var(--secondary-color);
+      font-size: 1.2rem;
+    }
+
+    .user-info-text p {
+      margin: 5px 0 0;
+      color: var(--dark-color);
+      opacity: 0.8;
+    }
+
+    .user-section {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 30px;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .user-section:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .user-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .user-header-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 15px;
+    }
+
+    .user-header h2 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .user-header p {
+      margin: 3px 0 0;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .message-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .message-item {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      position: relative;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message-item:last-child {
+      border-bottom: none;
+    }
+
+    .message-item:hover {
+      background-color: #f8f9fa;
+    }
+
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .message-author {
+      font-weight: 600;
+      color: var(--secondary-color);
+      display: flex;
+      align-items: center;
+    }
+
+    .message-author i {
+      margin-right: 8px;
+      color: var(--accent-color);
+    }
+
+    .message-content {
+      color: var(--dark-color);
+      margin-bottom: 10px;
+      line-height: 1.5;
+      flex-grow: 1;
+    }
+
+    .message-date {
+      font-size: 0.8rem;
+      color: #6c757d;
+      display: flex;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .message-date i {
+      margin-right: 5px;
+      font-size: 0.9rem;
+    }
+
+    .message-actions {
+      display: flex;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    .edit-button, .delete-button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      transition: var(--transition);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .edit-button {
+      background-color: var(--accent-color);
+      color: white;
+    }
+
+    .edit-button:hover {
+      background-color: #3ba1d8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .delete-button {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    .delete-button:hover {
+      background-color: #c82333;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .edit-button i, .delete-button i {
+      margin-right: 5px;
+      font-size: 0.8rem;
+    }
+
+    .edit-form {
+      background-color: white;
+      border: 1px solid #e9ecef;
+      border-radius: var(--border-radius);
+      padding: 15px;
+      margin-top: 15px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: none;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .edit-form.active {
+      display: block;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      resize: vertical;
+      margin-bottom: 15px;
+      font-family: inherit;
+      font-size: 1rem;
+      min-height: 100px;
+      transition: var(--transition);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 2px rgba(79, 195, 247, 0.2);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .save-button, .cancel-button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.9rem;
+      flex: 1;
+    }
+
+    .save-button {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .save-button:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+    }
+
+    .cancel-button {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    .cancel-button:hover {
+      background-color: #c82333;
+      transform: translateY(-2px);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal {
+      background-color: white;
+      padding: 30px;
+      border-radius: var(--border-radius);
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      transform: scale(0.9);
+      transition: var(--transition);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-overlay.active .modal {
+      transform: scale(1);
+    }
+
+    .modal h3 {
+      margin-bottom: 20px;
+      color: var(--danger-color);
+    }
+
+    .modal p {
+      margin-bottom: 25px;
+      color: var(--dark-color);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .confirm-button {
+      background-color: var(--danger-color);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .confirm-button:hover {
+      background-color: #c82333;
+    }
+
+    .cancel-modal-button {
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .cancel-modal-button:hover {
+      background-color: #5a6268;
+    }
+
+    .no-messages {
+      text-align: center;
+      padding: 30px;
+      color: #6c757d;
+      font-style: italic;
+    }
+
+    .no-messages i {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #adb5bd;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+
+      .user-selector select {
+        width: 100%;
+      }
+
+      .user-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 15px;
+      }
+
+      .user-header-avatar {
+        margin-bottom: 10px;
+      }
+
+      .message-item {
+        padding: 12px 15px;
+      }
+
+      .message-actions {
+        flex-direction: column;
+        margin-top: 10px;
+      }
+
+      .edit-button, .delete-button {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Gestion des messages</h1>
+
+    <div class="user-selector">
+      <select id="currentUserSelect" onchange="setCurrentUser()">
+        <option value="">-- Sélectionnez un utilisateur --</option>
+        <!-- Les options seront ajoutées dynamiquement -->
+      </select>
+    </div>
+
+    <div class="user-info" id="userInfo">
+      <div class="user-avatar" id="currentUserAvatar"></div>
+      <div class="user-info-text">
+        <h2 id="currentUserName"></h2>
+        <p id="currentUserUsername"></p>
+      </div>
+    </div>
+
+    <div id="allMessages"></div>
+  </div>
+
+  <!-- Modal de confirmation de suppression -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+      <h3><i class="fas fa-exclamation-triangle"></i> Confirmer la suppression</h3>
+      <p>Êtes-vous sûr de vouloir supprimer ce message ? Cette action est irréversible.</p>
+      <div class="modal-buttons">
+        <button class="confirm-button" onclick="confirmDelete()">
+          <i class="fas fa-trash"></i> Supprimer
+        </button>
+        <button class="cancel-modal-button" onclick="cancelDelete()">
+          <i class="fas fa-times"></i> Annuler
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Données locales : 3 utilisateurs avec messages
+    const users = [
+      { id: 2, name: "Bob Dupont", username: "bob_d" },
+      { id: 3, name: "Alice Martin", username: "alice_m" },
+      { id: 36, name: "Julien Dufour", username: "julien_d" }
+    ];
+
+    // Données locales : messages des 3 utilisateurs
+    let messages = [
+      {
+        id: 361,
+        content: "Message mis à jour avec un contenu plus détaillé pour répondre aux exigences du schéma.",
+        userId: 2,
+        createdAt: "2025-08-12T06:02:10.000Z",
+        updatedAt: "2025-08-12T06:03:50.000Z"
+      },
+      {
+        id: 362,
+        content: "Bonjour à tous ! Voici mon deuxième message pour tester l'application.",
+        userId: 3,
+        createdAt: "2025-08-13T08:15:00.000Z",
+        updatedAt: "2025-08-13T08:20:00.000Z"
+      },
+      {
+        id: 360,
+        content: "Notre projet avance bien, le succès est assuré pour cette version !",
+        userId: 36,
+        createdAt: "2025-08-11T20:54:48.000Z",
+        updatedAt: "2025-08-11T20:54:48.000Z"
+      },
+      {
+        id: 186,
+        content: "Comment allez-vous aujourd'hui ?",
+        userId: 2,
+        createdAt: "2025-08-11T20:54:48.000Z",
+        updatedAt: "2025-08-11T20:54:48.000Z"
+      },
+      {
+        id: 191,
+        content: "Quelqu'un veut prendre un café avec moi cet après-midi ?",
+        userId: 3,
+        createdAt: "2025-08-11T20:54:48.000Z",
+        updatedAt: "2025-08-11T20:54:48.000Z"
+      },
+      {
+        id: 216,
+        content: "Bonjour à tous ! Comment ça va ?",
+        userId: 36,
+        createdAt: "2025-08-11T20:54:48.000Z",
+        updatedAt: "2025-08-11T20:54:48.000Z"
+      }
+    ];
+
+    // ID de l'utilisateur connecté et ID du message à supprimer
+    let currentUserId = null;
+    let messageToDeleteId = null;
+
+    // Fonction pour formater la date
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    // Fonction pour trouver un utilisateur par ID
+    function getUserById(userId) {
+      return users.find(user => user.id === userId);
+    }
+
+    // Fonction pour afficher les informations de l'utilisateur connecté
+    function displayUserInfo() {
+      if (!currentUserId) {
+        document.getElementById('userInfo').style.display = 'none';
+        return;
+      }
+
+      const currentUser = getUserById(currentUserId);
+      if (!currentUser) return;
+
+      const userAvatarElement = document.getElementById('currentUserAvatar');
+      const userNameElement = document.getElementById('currentUserName');
+      const userUsernameElement = document.getElementById('currentUserUsername');
+
+      userAvatarElement.textContent = currentUser.name.charAt(0);
+      userNameElement.textContent = currentUser.name;
+      userUsernameElement.textContent = `@${currentUser.username}`;
+      document.getElementById('userInfo').style.display = 'flex';
+    }
+
+    // Fonction pour afficher tous les messages, groupés par utilisateur
+    function displayAllMessages() {
+      const allMessagesElement = document.getElementById('allMessages');
+
+      // Grouper les messages par utilisateur
+      const messagesByUser = {};
+      messages.forEach(message => {
+        const user = getUserById(message.userId);
+        if (user) {
+          if (!messagesByUser[user.id]) {
+            messagesByUser[user.id] = {
+              user: user,
+              messages: []
+            };
+          }
+          messagesByUser[user.id].messages.push(message);
+        }
+      });
+
+      // Générer le HTML pour chaque utilisateur et ses messages
+      let html = '';
+      for (const userId in messagesByUser) {
+        const { user, messages: userMessages } = messagesByUser[userId];
+        html += `
+          <div class="user-section">
+            <div class="user-header">
+              <div class="user-header-avatar">${user.name.charAt(0)}</div>
+              <div>
+                <h2>${user.name}</h2>
+                <p>@${user.username}</p>
+              </div>
+            </div>
+            <ul class="message-list">
+              ${userMessages.map(message => {
+                const isCurrentUser = currentUserId === user.id;
+                const editButton = isCurrentUser ?
+                  `<button class="edit-button" onclick="showEditForm(${message.id})">
+                    <i class="fas fa-edit"></i> Éditer
+                  </button>` :
+                  '';
+                const deleteButton = isCurrentUser ?
+                  `<button class="delete-button" onclick="showDeleteModal(${message.id})">
+                    <i class="fas fa-trash"></i> Supprimer
+                  </button>` :
+                  '';
+                return `
+                  <li class="message-item" data-message-id="${message.id}">
+                    <div class="message-header">
+                      <div>
+                        <div class="message-author">
+                          <i class="fas fa-user"></i>
+                          <span>${isCurrentUser ? 'Vous' : user.name}</span>
+                        </div>
+                        <div class="message-content">${message.content}</div>
+                        <div class="message-date">
+                          <i class="fas fa-clock"></i>
+                          <span>${formatDate(message.createdAt)}</span>
+                        </div>
+                      </div>
+                      <div class="message-actions">
+                        ${editButton}
+                        ${deleteButton}
+                      </div>
+                    </div>
+                    <div class="edit-form" id="editForm-${message.id}">
+                      <textarea id="editContent-${message.id}" rows="4" placeholder="Modifiez votre message...">${message.content}</textarea>
+                      <div class="button-group">
+                        <button class="save-button" onclick="saveEditedMessage(${message.id})">
+                          <i class="fas fa-save"></i> Enregistrer
+                        </button>
+                        <button class="cancel-button" onclick="cancelEdit(${message.id})">
+                          <i class="fas fa-times"></i> Annuler
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                `;
+              }).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
+      allMessagesElement.innerHTML = html || `
+        <div class="no-messages">
+          <i class="fas fa-comment-slash"></i>
+          <p>Aucun message trouvé.</p>
+        </div>
+      `;
+    }
+
+    // Fonction pour définir l'utilisateur connecté
+    function setCurrentUser() {
+      currentUserId = parseInt(document.getElementById('currentUserSelect').value);
+      displayUserInfo();
+      displayAllMessages();
+    }
+
+    // Fonction pour afficher le formulaire d'édition
+    function showEditForm(messageId) {
+      // Fermer tous les formulaires ouverts
+      document.querySelectorAll('.edit-form.active').forEach(form => {
+        form.classList.remove('active');
+      });
+
+      // Ouvrir le formulaire demandé
+      const editForm = document.getElementById(`editForm-${messageId}`);
+      editForm.classList.add('active');
+
+      // Faire défiler vers le message
+      document.querySelector(`[data-message-id="${messageId}"]`).scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+
+    // Fonction pour annuler l'édition
+    function cancelEdit(messageId) {
+      const editForm = document.getElementById(`editForm-${messageId}`);
+      editForm.classList.remove('active');
+    }
+
+    // Fonction pour enregistrer les modifications
+    function saveEditedMessage(messageId) {
+      const newContent = document.getElementById(`editContent-${messageId}`).value.trim();
+      if (!newContent) {
+        alert("Le message ne peut pas être vide !");
+        return;
+      }
+
+      const messageIndex = messages.findIndex(m => m.id === messageId);
+      if (messageIndex !== -1) {
+        messages[messageIndex].content = newContent;
+        messages[messageIndex].updatedAt = new Date().toISOString();
+        alert("Message mis à jour avec succès !");
+        displayAllMessages(); // Rafraîchir la liste
+      }
+    }
+
+    // Fonction pour afficher la modal de confirmation de suppression
+    function showDeleteModal(messageId) {
+      messageToDeleteId = messageId;
+      document.getElementById('deleteModal').classList.add('active');
+    }
+
+    // Fonction pour annuler la suppression
+    function cancelDelete() {
+      document.getElementById('deleteModal').classList.remove('active');
+      messageToDeleteId = null;
+    }
+
+    // Fonction pour confirmer la suppression
+    function confirmDelete() {
+      if (!messageToDeleteId) return;
+
+      const messageIndex = messages.findIndex(m => m.id === messageToDeleteId);
+      if (messageIndex !== -1) {
+        messages.splice(messageIndex, 1);
+        document.getElementById('deleteModal').classList.remove('active');
+        alert("Message supprimé avec succès !");
+        displayAllMessages(); // Rafraîchir la liste
+        messageToDeleteId = null;
+      }
+    }
+
+    // Remplir la liste déroulante des utilisateurs
+    const userSelect = document.getElementById('currentUserSelect');
+    users.forEach(user => {
+      const option = document.createElement('option');
+      option.value = user.id;
+      option.textContent = `${user.name} (@${user.username})`;
+      userSelect.appendChild(option);
+    });
+
+    // Initialisation
+    displayAllMessages();
+  </script>
+</body>
+</html>
