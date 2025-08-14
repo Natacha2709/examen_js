@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Créer un message</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    select, textarea, button {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .success-message {
+      color: green;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Créer un nouveau message</h1>
+  <form id="messageForm">
+    <div class="form-group">
+      <label for="userId">Utilisateur :</label>
+      <select id="userId" required>
+        <option value="">-- Sélectionnez un utilisateur --</option>
+        <!-- Les options seront ajoutées dynamiquement -->
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="content">Contenu du message :</label>
+      <textarea id="content" required placeholder="Écrivez votre message ici..."></textarea>
+    </div>
+    <button type="submit">Envoyer</button>
+  </form>
+  <div id="successMessage" class="success-message" style="display: none;"></div>
+
+  <script>
+    // Données locales : liste des utilisateurs (extraits de votre API)
+    const users = [
+      { id: 2, name: "Bob Dupont", username: "bob_d" },
+      { id: 3, name: "Alice Martin", username: "alice_m" },
+      { id: 4, name: "David Bernard", username: "david_b" },
+      { id: 5, name: "Emma Petit", username: "emma_p" },
+      { id: 6, name: "Felix Roux", username: "felix_r" },
+      { id: 7, name: "Grace Simon", username: "grace_s" },
+      { id: 8, name: "Hugo Michel", username: "hugo_m" },
+      { id: 9, name: "Iris Leroy", username: "iris_l" },
+      { id: 10, name: "Jules Moreau", username: "jules_m" },
+      { id: 11, name: "Karine Blanc", username: "karine_b" },
+      { id: 12, name: "Louis Garcia", username: "louis_g" },
+      { id: 13, name: "Marie Dubois", username: "marie_d" },
+      { id: 14, name: "Nicolas Faure", username: "nicolas_f" },
+      { id: 15, name: "Olivia Girard", username: "olivia_g" },
+      { id: 16, name: "Pierre Morel", username: "pierre_m" },
+      { id: 17, name: "Quentin Andre", username: "quentin_a" },
+      { id: 18, name: "Rose Mercier", username: "rose_m" },
+      { id: 19, name: "Samuel Lefebvre", username: "samuel_l" },
+      { id: 20, name: "Tina Rousseau", username: "tina_r" },
+      { id: 21, name: "Ugo Clement", username: "ugo_c" },
+      { id: 22, name: "Valerie Joly", username: "valerie_j" },
+      { id: 23, name: "William Roy", username: "william_r" },
+      { id: 24, name: "Xavier Caron", username: "xavier_c" },
+      { id: 25, name: "Yasmine Guerin", username: "yasmine_g" },
+      { id: 26, name: "Zacharie Muller", username: "zacharie_m" },
+      { id: 27, name: "Amélie Bonnet", username: "amelie_b" },
+      { id: 28, name: "Bastien Dupuis", username: "bastien_d" },
+      { id: 29, name: "Camille Fontaine", username: "camille_f" },
+      { id: 30, name: "Damien Chevalier", username: "damien_c" },
+      { id: 31, name: "Elise Gauthier", username: "elise_g" },
+      { id: 32, name: "Fabien Perrin", username: "fabien_p" },
+      { id: 33, name: "Gabrielle Morin", username: "gabrielle_m" },
+      { id: 34, name: "Henri Barbier", username: "henri_b" },
+      { id: 35, name: "Inès Brun", username: "ines_b" },
+      { id: 36, name: "Julien Dufour", username: "julien_d" },
+    ];
+
+    // Remplir la liste déroulante des utilisateurs
+    const userSelect = document.getElementById('userId');
+    users.forEach(user => {
+      const option = document.createElement('option');
+      option.value = user.id;
+      option.textContent = `${user.name} (@${user.username})`;
+      userSelect.appendChild(option);
+    });
+
+    // Gestion de la soumission du formulaire
+    document.getElementById('messageForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const userId = document.getElementById('userId').value;
+      const content = document.getElementById('content').value;
+
+      // Simuler l'envoi à l'API
+      const newMessage = {
+        userId: parseInt(userId),
+        content: content,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      // Afficher un message de succès
+      document.getElementById('successMessage').textContent = "Message envoyé avec succès !";
+      document.getElementById('successMessage').style.display = 'block';
+
+      // Réinitialiser le formulaire
+      this.reset();
+      setTimeout(() => {
+        document.getElementById('successMessage').style.display = 'none';
+      }, 3000);
+
+      // Log pour vérification (à remplacer par un appel API réel)
+      console.log("Nouveau message :", newMessage);
+    });
+  </script>
+</body>
+</html>
+
